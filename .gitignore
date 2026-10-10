@@ -1,0 +1,18 @@
+
+# Secrets
+.env
+.streamlit/secrets.toml
+
+# Python virtual environment
+env/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+#extra python file(not the main final file)
+app.py
+
+# Local environment files
+.DS_Store
