@@ -10,7 +10,29 @@ from langchain_community.vectorstores import InMemoryVectorStore
 import streamlit as st
 from time import sleep
 
-llm = ChatGoogleGenerativeAI(model="gemini-3.8-flash")
+
+
+
+import os
+
+# Read API key from environment or Streamlit Cloud Secrets
+api_key = os.getenv("GOOGLE_API_KEY")
+
+if not api_key:
+    try:
+        api_key = st.secrets["GOOGLE_API_KEY"]
+    except (KeyError, FileNotFoundError):
+        st.error("GOOGLE_API_KEY is missing. Configure it in your .env file or Streamlit Secrets.")
+        st.stop()
+
+
+
+
+llm = ChatGoogleGenerativeAI(
+    model="gemini-3.8-flash",
+    google_api_key=api_key
+)
+
 
 if "vector_db" not in st.session_state:
     st.session_state.vector_db= None
@@ -29,7 +51,7 @@ def document_process(path):
     docs = splitter.split_documents(docs)
 
     #embedding and vector store
-    embeddings =  GoogleGenerativeAIEmbeddings(model="gemini-embedding-2-preview")
+    embeddings =  GoogleGenerativeAIEmbeddings(model="gemini-embedding-2-preview", google_api_key=api_key)
     vector_db = InMemoryVectorStore.from_documents(documents = docs, embedding = embeddings)
 
     st.session_state.vector_db=vector_db
